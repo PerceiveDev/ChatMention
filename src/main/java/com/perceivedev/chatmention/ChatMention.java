@@ -1,7 +1,5 @@
 package com.perceivedev.chatmention;
 
-import static com.perceivedev.perceivecore.reflection.ReflectionUtil.$;
-
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -15,19 +13,23 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.perceivedev.chatmention.replacing.MessageReplacer;
+import com.perceivedev.chatmention.replacing.implementation.NameHighlighter;
 import com.perceivedev.perceivecore.packet.Packet;
 import com.perceivedev.perceivecore.packet.PacketEvent;
-import com.perceivedev.perceivecore.packet.PacketInjector;
 import com.perceivedev.perceivecore.packet.PacketListener;
+import com.perceivedev.perceivecore.packet.PacketManager;
 import com.perceivedev.perceivecore.reflection.ReflectionUtil;
 import com.perceivedev.perceivecore.reflection.ReflectionUtil.ReflectResponse;
 
 public class ChatMention extends JavaPlugin implements PacketListener, Listener {
 
     private static final String IDENTIFIER = hiddenText("ChatMention");
-    private Class<?>            targetClass;
+    private Class<?> targetClass;
 
-    private Logger              logger;
+    private Logger logger;
+
+    private MessageReplacer replacer;
 
     @Override
     public void onEnable() {
@@ -41,6 +43,8 @@ public class ChatMention extends JavaPlugin implements PacketListener, Listener 
         }
 
         targetClass = target.get();
+        replacer = new MessageReplacer();
+        replacer.addReplacer(new NameHighlighter("&b&l", ""));
 
         getServer().getPluginManager().registerEvents(this, this);
 
@@ -74,39 +78,43 @@ public class ChatMention extends JavaPlugin implements PacketListener, Listener 
         if (packetEvent.getPacket().getPacketClass() != targetClass) {
             return;
         }
-        logger.info("Chat packet found!");
+        System.out.println("\t>> Chat packet found!");
 
         Packet packet = packetEvent.getPacket();
-        System.out.println("Packet class: " + packet.getPacketClass().getSimpleName());
+
+        if (!isNormalChatPacket(packet)) {
+            System.out.println("\t>> Is no normal chat packet");
+            return;
+        }
+
+        System.out.println("\t>> Correct type found!");
+
+        String text = TextExtractor.decode(packet);
+
+        if (text == null) {
+            System.out.println("\t>> Got null!");
+            return;
+        }
+
+        Bukkit.getConsoleSender().sendMessage("\t>> Got text '" + text + "'");
+        String newText = replacer.replaceAll(text, packetEvent.getPlayer());
+        Bukkit.getConsoleSender().sendMessage("\t>> New text '" + newText + "'");
+
+        // TODO: 20.10.2016 Replace the packet using packetEvent.setPacket or modify existing 
+    }
+
+    private boolean isNormalChatPacket(Packet packet) {
         ReflectResponse<Object> type = packet.get("b");
-        System.out.println(type.isSuccessful() + ", " + type.isValuePresent() + ", " + ((byte) type.getValue()));
-        if (!type.isSuccessful() || !type.isValuePresent() || ((byte) type.getValue()) != 1) {
-            return;
-        }
+        System.out.println("\t>> " + type.isSuccessful() + ", " + type.isValuePresent() + ", " + type.getValue());
 
-        logger.info("Correct type found!");
-
-        ReflectResponse<Object> chatObject = packet.get("a");
-        System.out.println("Packet class: " + listFields(packet.getPacketClass(), packet.getNMSPacket()));
-        if (!chatObject.isSuccessful() || !chatObject.isValuePresent()) {
-            logger.severe("Failed to get chatObject! (" + chatObject.getResultType().toString() + ", " + chatObject.getValue() + ")");
-            return;
-        }
-
-        String text = $(chatObject.getValue()).getMethod("toPlainText").invoke().getValue().toString();
-
-        System.out.println("Chat message sending: " + text);
-        
-        text = $(chatObject.getValue()).getMethod("getText").invoke().getValue().toString();
-        
-        System.out.println("Chat message sending 2: " + text);
-
+        return type.isSuccessful()
+                  && type.isValuePresent()
+                  && ((byte) type.getValue()) < 2; // 0: chat (chat box), 1: system message (chat box), 2: action bar
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerJoin(PlayerJoinEvent e) {
-        PacketInjector injector = new PacketInjector(e.getPlayer());
-        injector.addPacketListener(this);
+        PacketManager.getInstance().addListener(this, e.getPlayer());
         logger.info("Injected packet listener for " + e.getPlayer().getName());
     }
 
