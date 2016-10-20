@@ -80,7 +80,7 @@ public class ChatMention extends JavaPlugin implements PacketListener, Listener 
         System.out.println("Packet class: " + packet.getPacketClass().getSimpleName());
         ReflectResponse<Object> type = packet.get("b");
         System.out.println(type.isSuccessful() + ", " + type.isValuePresent() + ", " + ((byte) type.getValue()));
-        if (!type.isSuccessful() || !type.isValuePresent() || ((byte) type.getValue()) != 0) {
+        if (!type.isSuccessful() || !type.isValuePresent() || ((byte) type.getValue()) != 1) {
             return;
         }
 
@@ -96,6 +96,10 @@ public class ChatMention extends JavaPlugin implements PacketListener, Listener 
         String text = $(chatObject.getValue()).getMethod("toPlainText").invoke().getValue().toString();
 
         System.out.println("Chat message sending: " + text);
+        
+        text = $(chatObject.getValue()).getMethod("getText").invoke().getValue().toString();
+        
+        System.out.println("Chat message sending 2: " + text);
 
     }
 
