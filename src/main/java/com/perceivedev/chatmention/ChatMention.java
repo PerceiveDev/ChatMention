@@ -87,7 +87,7 @@ public class ChatMention extends JavaPlugin implements PacketListener, Listener 
         logger.info("Correct type found!");
 
         ReflectResponse<Object> chatObject = packet.get("a");
-        System.out.println("Packet class: " + listFields(packet.getPacketClass()));
+        System.out.println("Packet class: " + listFields(packet.getPacketClass(), packet.getNMSPacket()));
         if (!chatObject.isSuccessful() || !chatObject.isValuePresent()) {
             logger.severe("Failed to get chatObject! (" + chatObject.getResultType().toString() + ", " + chatObject.getValue() + ")");
             return;
@@ -106,8 +106,18 @@ public class ChatMention extends JavaPlugin implements PacketListener, Listener 
         logger.info("Injected packet listener for " + e.getPlayer().getName());
     }
 
-    private String listFields(Class<?> clazz) {
-        return Arrays.stream(clazz.getFields()).map(field -> field.getType().getSimpleName() + " " + field.getName()).collect(Collectors.joining(", "));
+    private String listFields(Class<?> clazz, Object obj) {
+
+        return Arrays.stream(clazz.getDeclaredFields()).map(field -> {
+            try {
+                field.setAccessible(true);
+                return field.getType().getCanonicalName() + " " + field.getName() + " (" + field.get(obj) + ")";
+            } catch (Exception e) {
+                e.printStackTrace();
+                return "ERR";
+            }
+        }).collect(Collectors.joining(", "));
+
     }
 
 }
