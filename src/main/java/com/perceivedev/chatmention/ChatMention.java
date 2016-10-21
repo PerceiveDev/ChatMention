@@ -44,7 +44,7 @@ public class ChatMention extends JavaPlugin implements PacketListener, Listener 
 
         targetClass = target.get();
         replacer = new MessageReplacer();
-        replacer.addReplacer(new NameHighlighter("&b&l", ""));
+        replacer.addReplacer(new NameHighlighter("&b", ""));
 
         getServer().getPluginManager().registerEvents(this, this);
 
@@ -89,7 +89,7 @@ public class ChatMention extends JavaPlugin implements PacketListener, Listener 
 
         System.out.println("\t>> Correct type found!");
 
-        String text = TextExtractor.decode(packet);
+        String text = ChatPacketTextUtils.decode(packet);
 
         if (text == null) {
             System.out.println("\t>> Got null!");
@@ -100,6 +100,8 @@ public class ChatMention extends JavaPlugin implements PacketListener, Listener 
         String newText = replacer.replaceAll(text, packetEvent.getPlayer());
         Bukkit.getConsoleSender().sendMessage("\t>> New text '" + newText + "'");
 
+        packet.set("a", ChatPacketTextUtils.encode(newText));
+        
         // TODO: 20.10.2016 Replace the packet using packetEvent.setPacket or modify existing 
     }
 

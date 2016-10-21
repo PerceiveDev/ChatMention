@@ -1,8 +1,10 @@
 package com.perceivedev.chatmention;
 
 import static com.perceivedev.perceivecore.reflection.ReflectionUtil.NameSpace.NMS;
+import static com.perceivedev.perceivecore.reflection.ReflectionUtil.NameSpace.OBC;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.logging.Level;
@@ -14,6 +16,7 @@ import com.perceivedev.perceivecore.PerceiveCore;
 import com.perceivedev.perceivecore.packet.Packet;
 import com.perceivedev.perceivecore.reflection.ReflectionUtil;
 import com.perceivedev.perceivecore.reflection.ReflectionUtil.MemberPredicate;
+import com.perceivedev.perceivecore.reflection.ReflectionUtil.MethodPredicate;
 import com.perceivedev.perceivecore.reflection.ReflectionUtil.ReflectResponse;
 import com.perceivedev.perceivecore.reflection.ReflectionUtil.ReflectResponse.ResultType;
 
@@ -22,7 +25,7 @@ import net.minecraft.server.v1_10_R1.PacketPlayOutChat;
 /**
  * Extracts text from a PacketPlayOutChat
  */
-public class TextExtractor {
+public class ChatPacketTextUtils {
 
     private static final Class<?> PACKET_PLAY_OUT_CHAT;
 
@@ -37,6 +40,9 @@ public class TextExtractor {
             PACKET_PLAY_OUT_CHAT = target.get();
         }
     }
+
+    private static Class<?> CRAFT_CHAT_MESSAGE;
+    private static Method   craftChatFromString;
 
     private static Class<?>                 CHAT_MODIFIER_CLASS;
     private static Class<?>                 CHAT_COMPONENT_TEXT_CLASS;
@@ -71,6 +77,29 @@ public class TextExtractor {
                 error = true;
             } else {
                 I_CHAT_BASE_COMPONENT_CLASS = iChatBaseOptional.get();
+            }
+        }
+        {
+            Optional<Class<?>> craftChatMessageOpt = ReflectionUtil.getClass(OBC, "util.CraftChatMessage");
+            if (!craftChatMessageOpt.isPresent()) {
+                PerceiveCore.getInstance().getLogger().warning("Can't find CraftChatMessage class");
+                error = true;
+            } else {
+                CRAFT_CHAT_MESSAGE = craftChatMessageOpt.get();
+            }
+        }
+        {
+            if (!error) {
+                ReflectResponse<Method> craftChatMessageOpt = ReflectionUtil.getMethod(CRAFT_CHAT_MESSAGE,
+                          new MethodPredicate()
+                                    .withName("fromString")
+                                    .withParameters(String.class));
+                if (!craftChatMessageOpt.isValuePresent()) {
+                    PerceiveCore.getInstance().getLogger().warning("Can't find CraftChatMessage#fromString method");
+                    error = true;
+                } else {
+                    craftChatFromString = craftChatMessageOpt.getValue();
+                }
             }
         }
 
@@ -209,5 +238,27 @@ public class TextExtractor {
         }
 
         return builder.toString();
+    }
+
+    /**
+     * Encodes the message in an IChatBaseComponent
+     *
+     * @param message The message to encode
+     *
+     * @return The IChatBaseComponent for it
+     */
+    public static Object encode(String message) {
+        ReflectResponse<Object> reflectResponse = ReflectionUtil.invokeMethod(craftChatFromString, null, message);
+        if (!reflectResponse.isValuePresent()) {
+            if (reflectResponse.getResultType() == ResultType.ERROR) {
+                ChatMention.getPlugin(ChatMention.class).getLogger().
+                          log(Level.WARNING, "Error creating chat message", reflectResponse.getException());
+            } else {
+                ChatMention.getPlugin(ChatMention.class).getLogger()
+                          .log(Level.WARNING, "Error creating chat message: " + reflectResponse.getResultType());
+            }
+            return null;
+        }
+        return ((Object[]) reflectResponse.getValue())[0];
     }
 }
