@@ -1,0 +1,7 @@
+replacer:
+  one:
+    type: "name highlighter"
+    prefix: "&7&o"
+    suffix: ""
+    playerNamePrefix: ""
+    playerNameSuffix: ""

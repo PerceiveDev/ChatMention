@@ -229,9 +229,9 @@ public class ChatPacketTextUtils {
             }
             if (modifier != null) {
                 //noinspection StringConcatenationInLoop
-                text = colorTranslator.apply(modifier) + text;
-                //noinspection StringConcatenationInLoop
                 text = formatTranslator.apply(modifier) + text;
+                //noinspection StringConcatenationInLoop
+                text = colorTranslator.apply(modifier) + text;
             }
 
             builder.append(text);

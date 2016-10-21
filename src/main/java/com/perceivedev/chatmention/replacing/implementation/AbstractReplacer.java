@@ -10,7 +10,7 @@ import com.perceivedev.perceivecore.util.TextUtils;
 /**
  * Highlights the name
  */
-public class AbstractReplacer implements Replacer {
+public abstract class AbstractReplacer implements Replacer {
 
     private BiFunction<ReplacerContext, Player, String> replacerFunction;
     private BiFunction<String, Player, Boolean>         matcherFunction;
@@ -28,7 +28,6 @@ public class AbstractReplacer implements Replacer {
      * Set functions!
      */
     protected AbstractReplacer() {
-
     }
 
     /**
@@ -64,6 +63,7 @@ public class AbstractReplacer implements Replacer {
                           TextUtils.colorize(replacerFunction.apply(context, receivingPlayer))
                 );
             }
+            context.setWholeText(newMessage);
             context.setIndex(context.getIndex() + word.length());
         }
 
@@ -132,6 +132,15 @@ public class AbstractReplacer implements Replacer {
          */
         protected String getWholeText() {
             return wholeText;
+        }
+
+        /**
+         * Sets the new whole text
+         *
+         * @param wholeText The new whole text
+         */
+        private void setWholeText(String wholeText) {
+            this.wholeText = wholeText;
         }
     }
 }
