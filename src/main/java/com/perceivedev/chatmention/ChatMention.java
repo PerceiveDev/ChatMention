@@ -1,6 +1,5 @@
 package com.perceivedev.chatmention;
 
-import java.io.File;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -22,8 +21,7 @@ public class ChatMention extends JavaPlugin {
     public void onEnable() {
         messageReplacer = new MessageReplacer();
 
-        // TODO: 21.10.2016 Remove this delete. Just there to mirror changes to the config 
-        new File(getDataFolder(), "config.yml").delete();
+        // TODO: @rayzr - Add a reload command
 
         saveDefaultConfig();
 

@@ -50,7 +50,7 @@ public abstract class AbstractReplacer implements Replacer {
 
     @Override
     public String apply(String message, Player receivingPlayer) {
-        String[] words = message.split(" ");
+        String[] words = message.split("[\\s,.!?;:]+");
 
         String newMessage = message;
 
