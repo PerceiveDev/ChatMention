@@ -4,8 +4,10 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.perceivedev.chatmention.command.ReloadCommand;
 import com.perceivedev.chatmention.config.ConfigParser;
 import com.perceivedev.chatmention.listener.ChatPacketListener;
 import com.perceivedev.chatmention.listener.PlayerListener;
@@ -17,14 +19,35 @@ public class ChatMention extends JavaPlugin {
 
     private MessageReplacer messageReplacer;
 
+    private ChatPacketListener packetListener;
+    private PlayerListener     playerListener;
+
     @Override
     public void onEnable() {
-        messageReplacer = new MessageReplacer();
-
         // TODO: @rayzr - Add a reload command
 
         saveDefaultConfig();
 
+        reload();
+        getCommand("chatmention").setExecutor(new ReloadCommand(this));
+    }
+
+    /**
+     * Reloads the config and listener
+     */
+    public void reload() {
+        reloadConfig();
+
+        if (packetListener != null) {
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                PacketManager.getInstance().removeListener(packetListener, player);
+            }
+        }
+        if (playerListener != null) {
+            HandlerList.unregisterAll(playerListener);
+        }
+
+        messageReplacer = new MessageReplacer();
         {
             ConfigParser parser = new ConfigParser(getConfig().getConfigurationSection("replacer"));
             List<Replacer> replacerList = parser.parse();
@@ -36,9 +59,9 @@ public class ChatMention extends JavaPlugin {
             }
         }
 
-        ChatPacketListener packetListener = new ChatPacketListener(this);
+        packetListener = new ChatPacketListener(this);
 
-        getServer().getPluginManager().registerEvents(new PlayerListener(packetListener), this);
+        getServer().getPluginManager().registerEvents((playerListener = new PlayerListener(packetListener)), this);
 
         for (Player player : Bukkit.getOnlinePlayers()) {
             PacketManager.getInstance().addListener(packetListener, player);

@@ -4,6 +4,11 @@ version: 1.0
 description: A plugin to highlight name mentions
 author: [Rayzr]
 depend: [PerceiveCore]
+commands:
+  chatmention:
+    description: "Reloads ChatMention"
+    usage: "/<command> reload"
+    permission: "ChatMention.reload"
 #commands:
 #  chatmention:
 #    description: ChatMention main command
