@@ -1,7 +1,19 @@
 replacer:
-  one:
-    type: "name highlighter"
-    prefix: "&7&o"
-    suffix: ""
-    playerNamePrefix: ""
-    playerNameSuffix: ""
+# just some unique string
+ one:
+   # The type if the replacer. Currently only "name highlighter"
+   type: "name highlighter"
+   # The prefix it should add infront of the name
+   prefix: "&7&o"
+   # The suffix it should add after the name
+   suffix: "&b"
+   # The characters that MUST appear BEFORE the player name for it to be highlighted. If you add "@" here, it will only fire on "@<player name>"
+   playerNamePrefix: "@"
+   # The characters that MUST appear AFTER the player name for it to be highlighted. If you add "@" here, it will only fire on "<player name>@"
+   playerNameSuffix: ""
+ two:
+   type: "name highlighter"
+   prefix: "&a"
+   suffix: "&4"
+   playerNamePrefix: "|"
+   playerNameSuffix: "|"

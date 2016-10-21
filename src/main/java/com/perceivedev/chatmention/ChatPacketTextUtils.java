@@ -6,6 +6,7 @@ import static com.perceivedev.perceivecore.reflection.ReflectionUtil.NameSpace.O
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.logging.Level;
 
@@ -186,6 +187,7 @@ public class ChatPacketTextUtils {
 
         StringBuilder builder = new StringBuilder();
 
+        boolean wasFormattedBefore = false;
         for (Object component : message) {
             if (component == null) {
                 continue;
@@ -227,6 +229,7 @@ public class ChatPacketTextUtils {
                     modifier = modifierResponse.getValue();
                 }
             }
+
             if (modifier != null) {
                 //noinspection StringConcatenationInLoop
                 text = formatTranslator.apply(modifier) + text;
@@ -234,10 +237,60 @@ public class ChatPacketTextUtils {
                 text = colorTranslator.apply(modifier) + text;
             }
 
+            if (!isFormatted(modifier)) {
+                if (wasFormattedBefore) {
+                    text = ChatColor.RESET + text;
+                }
+            }
+            wasFormattedBefore = isFormatted(modifier);
+
             builder.append(text);
         }
 
         return builder.toString();
+    }
+
+    /**
+     * Checks if the modifier is formatted
+     *
+     * @param modifier The modifier to check
+     *
+     * @return True if the modifier is not null and formatted
+     */
+    private static boolean isFormatted(Object modifier) {
+        if (modifier == null) {
+            return false;
+        }
+        AtomicBoolean wasFormatted = new AtomicBoolean(false);
+        ReflectionUtil.invokeInstanceMethod(modifier, "isStrikethrough", new Class[0]).get().ifPresent(o1 -> {
+            if ((Boolean) o1) {
+                wasFormatted.set(true);
+            }
+        });
+        ReflectionUtil.invokeInstanceMethod(modifier, "isBold", new Class[0]).get().ifPresent(o1 -> {
+            if ((Boolean) o1) {
+                wasFormatted.set(true);
+            }
+        });
+        ReflectionUtil.invokeInstanceMethod(modifier, "isItalic", new Class[0]).get().ifPresent(o1 -> {
+            if ((Boolean) o1) {
+                wasFormatted.set(true);
+            }
+        });
+        ReflectionUtil.invokeInstanceMethod(modifier, "isUnderlined", new Class[0]).get().ifPresent(o1 -> {
+            if ((Boolean) o1) {
+                wasFormatted.set(true);
+            }
+        });
+        ReflectionUtil.invokeInstanceMethod(modifier, "isRandom", new Class[0]).get().ifPresent(o1 -> {
+            if ((Boolean) o1) {
+                wasFormatted.set(true);
+            }
+        });
+
+        ReflectionUtil.invokeInstanceMethod(modifier, "getColor", new Class[0]).get().ifPresent(o1 -> wasFormatted.set(true));
+
+        return wasFormatted.get();
     }
 
     /**

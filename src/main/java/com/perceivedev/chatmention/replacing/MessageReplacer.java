@@ -65,7 +65,7 @@ public class MessageReplacer {
     public String replaceAll(String message, Player player) {
         String replacementMessage = message;
         for (Replacer replacer : replacerList) {
-            replacementMessage = replacer.apply(message, player);
+            replacementMessage = replacer.apply(replacementMessage, player);
         }
         return replacementMessage;
     }
