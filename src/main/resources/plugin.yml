@@ -2,16 +2,10 @@ main: com.perceivedev.chatmention.ChatMention
 name: ChatMention
 version: 1.0
 description: A plugin to highlight name mentions
-author: [Rayzr]
+author: [Rayzr,I Al Istannen]
 depend: [PerceiveCore]
 commands:
   chatmention:
     description: "Reloads ChatMention"
     usage: "/<command> reload"
     permission: "ChatMention.reload"
-#commands:
-#  chatmention:
-#    description: ChatMention main command
-#    aliases: [alias1,alias2]
-#    usage: "/chatmention [command]"
-#    permission: ChatMention.main

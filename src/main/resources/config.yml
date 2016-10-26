@@ -11,9 +11,3 @@ replacer:
    playerNamePrefix: "@"
    # The characters that MUST appear AFTER the player name for it to be highlighted. If you add "@" here, it will only fire on "<player name>@"
    playerNameSuffix: ""
- two:
-   type: "name highlighter"
-   prefix: "&a"
-   suffix: "&4"
-   playerNamePrefix: "|"
-   playerNameSuffix: "|"
