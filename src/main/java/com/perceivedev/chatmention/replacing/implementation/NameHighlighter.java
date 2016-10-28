@@ -20,10 +20,24 @@ public class NameHighlighter extends AbstractReplacer {
      * @param playerNameSuffix The suffix after the player name, for it to be recognized
      */
     public NameHighlighter(String prefix, String suffix, String playerNamePrefix, String playerNameSuffix) {
-        setMatcherFunction((s, player) ->
-                  s.equalsIgnoreCase(playerNamePrefix + player.getDisplayName() + playerNameSuffix)
-                            || s.equalsIgnoreCase(playerNamePrefix + player.getName() + playerNameSuffix)
-        );
+        setMatcherFunction((s, player) -> {
+
+            {
+                String withName = playerNamePrefix + player.getName() + playerNameSuffix;
+                if (s.contains(withName)) {
+                    return withName;
+                }
+            }
+
+            {
+                String withDisplayName = playerNamePrefix + player.getDisplayName() + playerNameSuffix;
+                if (s.contains(withDisplayName)) {
+                    return withDisplayName;
+                }
+            }
+
+            return null;
+        });
 
         setReplacerFunction((context, player) -> {
             String newWord = prefix + context.getCurrentWord();

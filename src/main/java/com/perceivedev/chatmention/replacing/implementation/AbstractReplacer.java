@@ -13,13 +13,13 @@ import com.perceivedev.perceivecore.util.TextUtils;
 public abstract class AbstractReplacer implements Replacer {
 
     private BiFunction<ReplacerContext, Player, String> replacerFunction;
-    private BiFunction<String, Player, Boolean>         matcherFunction;
+    private BiFunction<String, Player, String>          matcherFunction;
 
     /**
      * @param replacerFunction The replacer function
-     * @param matcherFunction The matching function
+     * @param matcherFunction The matching function. The returned String is either null for no match or the match
      */
-    public AbstractReplacer(BiFunction<ReplacerContext, Player, String> replacerFunction, BiFunction<String, Player, Boolean> matcherFunction) {
+    public AbstractReplacer(BiFunction<ReplacerContext, Player, String> replacerFunction, BiFunction<String, Player, String> matcherFunction) {
         this.replacerFunction = replacerFunction;
         this.matcherFunction = matcherFunction;
     }
@@ -35,7 +35,7 @@ public abstract class AbstractReplacer implements Replacer {
      *
      * @param matcherFunction The new matcher function
      */
-    protected void setMatcherFunction(BiFunction<String, Player, Boolean> matcherFunction) {
+    protected void setMatcherFunction(BiFunction<String, Player, String> matcherFunction) {
         this.matcherFunction = matcherFunction;
     }
 
@@ -54,17 +54,10 @@ public abstract class AbstractReplacer implements Replacer {
 
         String newMessage = message;
 
-        ReplacerContext context = new ReplacerContext("", message, 0);
-        for (String word : words) {
-            context.setCurrentWord(word);
-            if (matcherFunction.apply(word, receivingPlayer)) {
-                newMessage = newMessage.replace(
-                          word,
-                          TextUtils.colorize(replacerFunction.apply(context, receivingPlayer))
-                );
-            }
-            context.setWholeText(newMessage);
-            context.setIndex(context.getIndex() + word.length());
+        String matched = matcherFunction.apply(message, receivingPlayer);
+        if (matched != null) {
+            String replaced = replacerFunction.apply(new ReplacerContext(matched, message, message.indexOf(matched)), receivingPlayer);
+            newMessage = TextUtils.colorize(newMessage.replace(matched, replaced));
         }
 
         return newMessage;

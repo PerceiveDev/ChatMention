@@ -24,8 +24,6 @@ public class ChatMention extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        // TODO: @rayzr - Add a reload command
-
         saveDefaultConfig();
 
         reload();

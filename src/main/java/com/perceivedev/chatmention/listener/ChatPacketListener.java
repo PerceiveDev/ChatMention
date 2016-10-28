@@ -55,6 +55,10 @@ public class ChatPacketListener extends PacketAdapter {
 
         String newText = plugin.getMessageReplacer().replaceAll(text, packetEvent.getPlayer());
 
+        if (newText.equals(text)) {
+            return;
+        }
+        
         packet.set("a", ChatPacketTextUtils.encode(newText));
     }
 
