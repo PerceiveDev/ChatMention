@@ -50,8 +50,6 @@ public abstract class AbstractReplacer implements Replacer {
 
     @Override
     public String apply(String message, Player receivingPlayer) {
-        // String[] words = message.split("[\\s,.!?;:]+");
-
         String newMessage = message;
 
         String matched = matcherFunction.apply(message, receivingPlayer);
@@ -92,15 +90,6 @@ public abstract class AbstractReplacer implements Replacer {
         }
 
         /**
-         * Sets the new index
-         *
-         * @param index The new index
-         */
-        protected void setIndex(int index) {
-            this.index = index;
-        }
-
-        /**
          * Returns the current word
          *
          * @return The current word
@@ -110,30 +99,12 @@ public abstract class AbstractReplacer implements Replacer {
         }
 
         /**
-         * Sets the new current word
-         *
-         * @param currentWord The nee current word
-         */
-        protected void setCurrentWord(String currentWord) {
-            this.currentWord = currentWord;
-        }
-
-        /**
          * Returns the whole text
          *
          * @return The whole text
          */
         protected String getWholeText() {
             return wholeText;
-        }
-
-        /**
-         * Sets the new whole text
-         *
-         * @param wholeText The new whole text
-         */
-        protected void setWholeText(String wholeText) {
-            this.wholeText = wholeText;
         }
     }
 }
