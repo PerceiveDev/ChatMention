@@ -16,6 +16,8 @@ import com.perceivedev.chatmention.replacing.Replacer;
 import com.perceivedev.perceivecore.packet.PacketManager;
 
 public class ChatMention extends JavaPlugin {
+    
+    private static ChatMention instance;
 
     private MessageReplacer messageReplacer;
 
@@ -24,10 +26,17 @@ public class ChatMention extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        instance = this;
+        
         saveDefaultConfig();
 
         reload();
         getCommand("chatmention").setExecutor(new ReloadCommand(this));
+    }
+    
+    @Override
+    public void onDisable() {
+        instance = null;
     }
 
     /**
@@ -71,5 +80,12 @@ public class ChatMention extends JavaPlugin {
      */
     public MessageReplacer getMessageReplacer() {
         return messageReplacer;
+    }
+    
+    public static ChatMention getInstance() {
+        if (instance == null) {
+            throw new IllegalStateException("The plugin hasn't been initialized yet!");
+        }
+        return instance;
     }
 }

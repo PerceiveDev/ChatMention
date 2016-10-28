@@ -55,7 +55,7 @@ public class NameHighlighter extends AbstractReplacer {
     public Replacer fromSection(ConfigurationSection section) {
         String prefix;
         if (!section.contains("prefix") || !section.isString("prefix")) {
-            ChatMention.getPlugin(ChatMention.class).getLogger().warning(
+            ChatMention.getInstance().getLogger().warning(
                       "Section: '" + section.getCurrentPath() + "' misses key 'prefix'"
             );
             return null;
@@ -64,7 +64,7 @@ public class NameHighlighter extends AbstractReplacer {
 
         String suffix;
         if (!section.contains("suffix") || !section.isString("suffix")) {
-            ChatMention.getPlugin(ChatMention.class).getLogger().warning(
+            ChatMention.getInstance().getLogger().warning(
                       "Section: '" + section.getCurrentPath() + "' misses key 'suffix'"
             );
             return null;
@@ -73,7 +73,7 @@ public class NameHighlighter extends AbstractReplacer {
 
         String playerNamePrefix;
         if (!section.contains("playerNamePrefix") || !section.isString("playerNamePrefix")) {
-            ChatMention.getPlugin(ChatMention.class).getLogger().warning(
+            ChatMention.getInstance().getLogger().warning(
                       "Section: '" + section.getCurrentPath() + "' misses key 'playerNamePrefix'"
             );
             return null;
@@ -82,7 +82,7 @@ public class NameHighlighter extends AbstractReplacer {
 
         String playerNameSuffix;
         if (!section.contains("playerNameSuffix") || !section.isString("playerNameSuffix")) {
-            ChatMention.getPlugin(ChatMention.class).getLogger().warning(
+            ChatMention.getInstance().getLogger().warning(
                       "Section: '" + section.getCurrentPath() + "' misses key 'playerNameSuffix'"
             );
             return null;

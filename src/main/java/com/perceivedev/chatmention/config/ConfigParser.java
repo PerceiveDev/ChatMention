@@ -38,11 +38,14 @@ public class ConfigParser {
             ConfigurationSection replacerSection = section.getConfigurationSection(key);
 
             String type = replacerSection.getString("type");
-            Optional<Replacer> replacerBase = ChatMention.getPlugin(ChatMention.class).getMessageReplacer().getReplacer(type);
+            Optional<Replacer> replacerBase = ChatMention.getInstance().getMessageReplacer().getReplacer(type);
 
             if (!replacerBase.isPresent()) {
-                ChatMention.getPlugin(ChatMention.class).getLogger().log(Level.WARNING,
-                          "Unknown replacer type: '" + type + "' in key " + key);
+                if (type == null) {
+                    ChatMention.getInstance().getLogger().log(Level.WARNING, "Section: '" + section.getCurrentPath() + "' misses key 'type'");
+                } else {
+                    ChatMention.getInstance().getLogger().log(Level.WARNING, "Unknown replacer type: '" + type + "' in key " + key);
+                }
                 continue;
             }
 
