@@ -17,7 +17,8 @@ public abstract class AbstractReplacer implements Replacer {
 
     /**
      * @param replacerFunction The replacer function
-     * @param matcherFunction The matching function. The returned String is either null for no match or the match
+     * @param matcherFunction The matching function. The returned String is
+     *            either null for no match or the match
      */
     public AbstractReplacer(BiFunction<ReplacerContext, Player, String> replacerFunction, BiFunction<String, Player, String> matcherFunction) {
         this.replacerFunction = replacerFunction;

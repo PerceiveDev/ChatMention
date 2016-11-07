@@ -58,7 +58,7 @@ public class ChatPacketListener extends PacketAdapter {
         if (newText.equals(text)) {
             return;
         }
-        
+
         packet.set("a", ChatPacketTextUtils.encode(newText));
     }
 
@@ -66,7 +66,9 @@ public class ChatPacketListener extends PacketAdapter {
         ReflectResponse<Object> type = packet.get("b");
 
         return type.isSuccessful()
-                  && type.isValuePresent()
-                  && ((byte) type.getValue()) < 2; // 0: chat (chat box), 1: system message (chat box), 2: action bar
+                && type.isValuePresent()
+                && ((byte) type.getValue()) < 2; // 0: chat (chat box), 1:
+                                                 // system message (chat box),
+                                                 // 2: action bar
     }
 }

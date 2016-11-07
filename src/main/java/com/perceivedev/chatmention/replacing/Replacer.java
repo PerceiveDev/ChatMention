@@ -13,7 +13,8 @@ public interface Replacer {
      *
      * @param section The {@link ConfigurationSection} to read from
      *
-     * @return A new Replacer, built from the given ConfigurationSection. May be null, if an error occured.
+     * @return A new Replacer, built from the given ConfigurationSection. May be
+     *         null, if an error occured.
      */
     Replacer fromSection(ConfigurationSection section);
 

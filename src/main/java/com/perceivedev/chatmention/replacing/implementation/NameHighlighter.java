@@ -16,8 +16,10 @@ public class NameHighlighter extends AbstractReplacer {
      *
      * @param prefix The prefix for the name
      * @param suffix The suffix for the name
-     * @param playerNamePrefix The prefix before the player name, for it to be recognized
-     * @param playerNameSuffix The suffix after the player name, for it to be recognized
+     * @param playerNamePrefix The prefix before the player name, for it to be
+     *            recognized
+     * @param playerNameSuffix The suffix after the player name, for it to be
+     *            recognized
      */
     public NameHighlighter(String prefix, String suffix, String playerNamePrefix, String playerNameSuffix) {
         setMatcherFunction((s, player) -> {
@@ -56,8 +58,7 @@ public class NameHighlighter extends AbstractReplacer {
         String prefix;
         if (!section.contains("prefix") || !section.isString("prefix")) {
             ChatMention.getInstance().getLogger().warning(
-                      "Section: '" + section.getCurrentPath() + "' misses key 'prefix'"
-            );
+                    "Section: '" + section.getCurrentPath() + "' misses key 'prefix'");
             return null;
         }
         prefix = section.getString("prefix");
@@ -65,8 +66,7 @@ public class NameHighlighter extends AbstractReplacer {
         String suffix;
         if (!section.contains("suffix") || !section.isString("suffix")) {
             ChatMention.getInstance().getLogger().warning(
-                      "Section: '" + section.getCurrentPath() + "' misses key 'suffix'"
-            );
+                    "Section: '" + section.getCurrentPath() + "' misses key 'suffix'");
             return null;
         }
         suffix = section.getString("suffix");
@@ -74,8 +74,7 @@ public class NameHighlighter extends AbstractReplacer {
         String playerNamePrefix;
         if (!section.contains("playerNamePrefix") || !section.isString("playerNamePrefix")) {
             ChatMention.getInstance().getLogger().warning(
-                      "Section: '" + section.getCurrentPath() + "' misses key 'playerNamePrefix'"
-            );
+                    "Section: '" + section.getCurrentPath() + "' misses key 'playerNamePrefix'");
             return null;
         }
         playerNamePrefix = section.getString("playerNamePrefix");
@@ -83,8 +82,7 @@ public class NameHighlighter extends AbstractReplacer {
         String playerNameSuffix;
         if (!section.contains("playerNameSuffix") || !section.isString("playerNameSuffix")) {
             ChatMention.getInstance().getLogger().warning(
-                      "Section: '" + section.getCurrentPath() + "' misses key 'playerNameSuffix'"
-            );
+                    "Section: '" + section.getCurrentPath() + "' misses key 'playerNameSuffix'");
             return null;
         }
         playerNameSuffix = section.getString("playerNameSuffix");

@@ -34,7 +34,7 @@ public class ChatPacketTextUtils {
         Optional<Class<?>> target = ReflectionUtil.getClass("{nms}.PacketPlayOutChat");
         if (!target.isPresent()) {
             ChatMention.getInstance().getLogger()
-                      .severe("Could not find chat packet class! The plugin will now be disabled.");
+                    .severe("Could not find chat packet class! The plugin will now be disabled.");
             Bukkit.getPluginManager().disablePlugin(ChatMention.getInstance());
             PACKET_PLAY_OUT_CHAT = null;
         } else {
@@ -42,15 +42,15 @@ public class ChatPacketTextUtils {
         }
     }
 
-    private static Class<?> CRAFT_CHAT_MESSAGE;
-    private static Method   craftChatFromString;
+    private static Class<?>                 CRAFT_CHAT_MESSAGE;
+    private static Method                   craftChatFromString;
 
     private static Class<?>                 CHAT_MODIFIER_CLASS;
     private static Class<?>                 CHAT_COMPONENT_TEXT_CLASS;
     private static Class<?>                 I_CHAT_BASE_COMPONENT_CLASS;
     private static Function<Object, String> formatTranslator;
     private static Function<Object, String> colorTranslator;
-    private static boolean error = false;
+    private static boolean                  error = false;
 
     static {
         {
@@ -92,9 +92,9 @@ public class ChatPacketTextUtils {
         {
             if (!error) {
                 ReflectResponse<Method> craftChatMessageOpt = ReflectionUtil.getMethod(CRAFT_CHAT_MESSAGE,
-                          new MethodPredicate()
-                                    .withName("fromString")
-                                    .withParameters(String.class));
+                        new MethodPredicate()
+                                .withName("fromString")
+                                .withParameters(String.class));
                 if (!craftChatMessageOpt.isValuePresent()) {
                     PerceiveCore.getInstance().getLogger().warning("Can't find CraftChatMessage#fromString method");
                     error = true;
@@ -146,9 +146,7 @@ public class ChatPacketTextUtils {
                 }
                 StringBuilder colorResult = new StringBuilder();
 
-                ReflectionUtil.invokeInstanceMethod(o, "getColor", new Class[0]).get().ifPresent(o1 ->
-                          colorResult.append(o1.toString())
-                );
+                ReflectionUtil.invokeInstanceMethod(o, "getColor", new Class[0]).get().ifPresent(o1 -> colorResult.append(o1.toString()));
 
                 return colorResult.toString();
             };
@@ -168,8 +166,8 @@ public class ChatPacketTextUtils {
         }
 
         ReflectResponse<Object> reflectResponse = ReflectionUtil.getFieldValue(PacketPlayOutChat.class,
-                  packet.getNMSPacket(),
-                  new MemberPredicate<Field>().withName("a"));
+                packet.getNMSPacket(),
+                new MemberPredicate<Field>().withName("a"));
 
         if (!reflectResponse.isValuePresent()) {
             return null;
@@ -178,7 +176,7 @@ public class ChatPacketTextUtils {
         // is not a chat component
         if (!I_CHAT_BASE_COMPONENT_CLASS.isAssignableFrom(reflectResponse.getValue().getClass())) {
             ChatMention.getInstance().getLogger()
-                      .log(Level.SEVERE, "No chat component with name 'a' found!");
+                    .log(Level.SEVERE, "No chat component with name 'a' found!");
             return null;
         }
 
@@ -199,12 +197,12 @@ public class ChatPacketTextUtils {
             String text;
             {
                 ReflectResponse<Object> textResponse = ReflectionUtil.invokeInstanceMethod(component,
-                          "getText",
-                          new Class[0]);
+                        "getText",
+                        new Class[0]);
                 if (!textResponse.isValuePresent()) {
                     if (textResponse.getResultType() == ResultType.ERROR) {
                         ChatMention.getInstance().getLogger()
-                                  .log(Level.WARNING, "Error getting text", textResponse.getException());
+                                .log(Level.WARNING, "Error getting text", textResponse.getException());
                     }
                     continue;
                 } else {
@@ -214,15 +212,14 @@ public class ChatPacketTextUtils {
             Object modifier;
             {
                 ReflectResponse<Object> modifierResponse = ReflectionUtil.invokeInstanceMethod(component,
-                          "getChatModifier",
-                          new Class[0]);
+                        "getChatModifier",
+                        new Class[0]);
                 if (!modifierResponse.isSuccessful()) {
                     if (modifierResponse.getResultType() == ResultType.ERROR) {
-                        ChatMention.getInstance().getLogger().
-                                  log(Level.WARNING, "Error getting modifier", modifierResponse.getException());
+                        ChatMention.getInstance().getLogger().log(Level.WARNING, "Error getting modifier", modifierResponse.getException());
                     } else {
                         ChatMention.getInstance().getLogger()
-                                  .log(Level.WARNING, "Error getting modifier: " + modifierResponse.getResultType());
+                                .log(Level.WARNING, "Error getting modifier: " + modifierResponse.getResultType());
                     }
                     continue;
                 } else {
@@ -231,9 +228,9 @@ public class ChatPacketTextUtils {
             }
 
             if (modifier != null) {
-                //noinspection StringConcatenationInLoop
+                // noinspection StringConcatenationInLoop
                 text = formatTranslator.apply(modifier) + text;
-                //noinspection StringConcatenationInLoop
+                // noinspection StringConcatenationInLoop
                 text = colorTranslator.apply(modifier) + text;
             }
 
@@ -304,11 +301,10 @@ public class ChatPacketTextUtils {
         ReflectResponse<Object> reflectResponse = ReflectionUtil.invokeMethod(craftChatFromString, null, message);
         if (!reflectResponse.isValuePresent()) {
             if (reflectResponse.getResultType() == ResultType.ERROR) {
-                ChatMention.getInstance().getLogger().
-                          log(Level.WARNING, "Error creating chat message", reflectResponse.getException());
+                ChatMention.getInstance().getLogger().log(Level.WARNING, "Error creating chat message", reflectResponse.getException());
             } else {
                 ChatMention.getInstance().getLogger()
-                          .log(Level.WARNING, "Error creating chat message: " + reflectResponse.getResultType());
+                        .log(Level.WARNING, "Error creating chat message: " + reflectResponse.getResultType());
             }
             return null;
         }

@@ -17,7 +17,7 @@ public class MessageReplacer {
 
     private Map<String, Replacer> registeredReplacer = new HashMap<>();
 
-    private List<Replacer> replacerList = new ArrayList<>();
+    private List<Replacer>        replacerList       = new ArrayList<>();
 
     {
         // add defaults
