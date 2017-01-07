@@ -6,7 +6,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
 import com.perceivedev.chatmention.ChatMention;
-import com.perceivedev.perceivecore.util.Unicode;
+import com.perceivedev.perceivecore.util.text.Unicode;
 
 /**
  * A reload command

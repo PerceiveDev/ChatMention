@@ -5,7 +5,7 @@ import java.util.function.BiFunction;
 import org.bukkit.entity.Player;
 
 import com.perceivedev.chatmention.replacing.Replacer;
-import com.perceivedev.perceivecore.util.TextUtils;
+import com.perceivedev.perceivecore.util.text.TextUtils;
 
 /**
  * Highlights the name
